@@ -29,7 +29,7 @@ targets:
       properties:
         LSUIElement: true
         CFBundleDisplayName: Wisp
-        SUFeedURL: "https://gruffix.github.io/wisp/appcast.xml"
+        SUFeedURL: "https://gruffix.github.io/wisp-releases/appcast.xml"
         SUEnableAutomaticChecks: true
         SUPublicEDKey: "HfeiC9J2JUQFerjkq/c/U5lQsFFaBoTzFGpe7bxtoy4="
     entitlements:
