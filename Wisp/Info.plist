@@ -22,5 +22,11 @@
 	<string>1</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://gruffix.github.io/wisp/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>HfeiC9J2JUQFerjkq/c/U5lQsFFaBoTzFGpe7bxtoy4=</string>
 </dict>
 </plist>

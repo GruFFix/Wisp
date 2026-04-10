@@ -7,6 +7,7 @@ import ServiceManagement
 struct SettingsView: View {
     @ObservedObject var settings: DustSettings
     var onClose: () -> Void
+    var onCheckForUpdates: () -> Void
 
     @State private var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled
 
@@ -206,6 +207,8 @@ struct SettingsView: View {
                 .foregroundColor(.white.opacity(0.18))
             Spacer()
             Menu {
+                Button("Check for Updates…") { onCheckForUpdates() }
+                Divider()
                 Button("Quit Wisp") { NSApp.terminate(nil) }
             } label: {
                 Image(systemName: "ellipsis")

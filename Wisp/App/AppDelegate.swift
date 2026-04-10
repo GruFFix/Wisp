@@ -2,6 +2,7 @@ import AppKit
 import Combine
 import SwiftUI
 import ServiceManagement
+import Sparkle
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
@@ -10,6 +11,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var dustWindows:  [DustWindow] = []
     private let settings    = DustSettings()
     private var cancellable: AnyCancellable?
+
+    private let updaterController = SPUStandardUpdaterController(
+        startingUpdater: true,
+        updaterDelegate: nil,
+        userDriverDelegate: nil
+    )
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupDustWindows()
@@ -92,8 +99,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         popover.behavior   = .transient
         popover.appearance = NSAppearance(named: .darkAqua)
         popover.contentViewController = NSHostingController(
-            rootView: SettingsView(settings: settings,
-                                   onClose: { [weak self] in self?.popover.close() })
+            rootView: SettingsView(
+                settings: settings,
+                onClose: { [weak self] in self?.popover.close() },
+                onCheckForUpdates: { [weak self] in
+                    self?.updaterController.updater.checkForUpdates()
+                }
+            )
         )
         popover.contentSize = NSSize(width: 300, height: 500)
     }
