@@ -85,7 +85,7 @@ struct SettingsView: View {
     private var themeCard: some View {
         Card {
             VStack(alignment: .leading, spacing: 10) {
-                Label("Color Theme")
+                CardLabel("Color Theme")
                 HStack(spacing: 0) {
                     ForEach(ColorTheme.allCases) { theme in
                         SwatchDot(theme: theme,
@@ -249,7 +249,7 @@ private struct CardDivider: View {
     }
 }
 
-private struct Label: View {
+private struct CardLabel: View {
     let text: String
     init(_ text: String) { self.text = text }
     var body: some View {
@@ -324,7 +324,7 @@ struct ParamSlider: View {
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white.opacity(0.80))
                 Spacer()
-                Text(String(format: "%.1f×", value))
+                Text(String(format: "%.1f", value))
                     .font(.system(size: 11, design: .monospaced))
                     .foregroundColor(accent)
             }
@@ -383,8 +383,13 @@ struct WindRow: View {
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(.white.opacity(0.80))
             Spacer()
-            WindJoystick(windX: $windX, windY: $windY, accent: accent)
-                .frame(width: 62, height: 62)
+            VStack(spacing: 4) {
+                WindJoystick(windX: $windX, windY: $windY, accent: accent)
+                    .frame(width: 62, height: 62)
+                Text("double-tap to reset")
+                    .font(.system(size: 8))
+                    .foregroundColor(.white.opacity(0.20))
+            }
         }
         .padding(.vertical, 8)
     }
@@ -494,15 +499,4 @@ struct WindJoystick: View {
     }
 }
 
-// MARK: - Visual Effect
-
-struct VisualEffectView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let v = NSVisualEffectView()
-        v.material = .hudWindow; v.blendingMode = .withinWindow
-        v.state = .active; v.appearance = NSAppearance(named: .darkAqua)
-        return v
-    }
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
-}
 
