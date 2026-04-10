@@ -12,17 +12,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let settings    = DustSettings()
     private var cancellable: AnyCancellable?
     private var updaterController: SPUStandardUpdaterController!
-    private var licenseWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        if LicenseManager.shared.isActivated {
-            launchApp()
-        } else {
-            showLicenseWindow()
-        }
-    }
-
-    private func launchApp() {
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
             updaterDelegate: nil,
@@ -41,30 +32,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     self.applyToAll(self.settings.config)
                 }
             }
-    }
-
-    private func showLicenseWindow() {
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 320, height: 380),
-            styleMask: [.titled, .closable, .fullSizeContentView],
-            backing: .buffered,
-            defer: false
-        )
-        window.titlebarAppearsTransparent = true
-        window.titleVisibility = .hidden
-        window.isMovableByWindowBackground = true
-        window.backgroundColor = NSColor(red: 0.051, green: 0.051, blue: 0.051, alpha: 1)
-        window.contentViewController = NSHostingController(
-            rootView: LicenseView(onActivated: { [weak self, weak window] in
-                window?.close()
-                self?.licenseWindow = nil
-                self?.launchApp()
-            })
-        )
-        window.center()
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
-        licenseWindow = window
     }
 
     // MARK: - Multi-monitor
