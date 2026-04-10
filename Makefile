@@ -29,7 +29,7 @@ dmg:
 	@rm -f "$(DMG_NAME)"
 	create-dmg \
 	  --volname "$(APP_NAME)" \
-	  --volicon "FairyDesk/Assets.xcassets/AppIcon.appiconset/icon_512.png" \
+	  --volicon "Wisp/Assets.xcassets/AppIcon.appiconset/icon_512.png" \
 	  --window-size 540 380 \
 	  --icon-size 128 \
 	  --icon "$(APP_BUNDLE)" 160 185 \
