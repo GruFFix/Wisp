@@ -11,14 +11,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var dustWindows:  [DustWindow] = []
     private let settings    = DustSettings()
     private var cancellable: AnyCancellable?
-
-    private let updaterController = SPUStandardUpdaterController(
-        startingUpdater: true,
-        updaterDelegate: nil,
-        userDriverDelegate: nil
-    )
+    private var updaterController: SPUStandardUpdaterController!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true,
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
         setupDustWindows()
         setupMenuBar()
         applyToAll(settings.config)
@@ -86,12 +86,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupMenuBar() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "sparkles",
-                                   accessibilityDescription: "Wisp")
+            button.image = menuBarIcon()
             button.action = #selector(togglePopover)
             button.target = self
         }
         buildPopover()
+    }
+
+    private func menuBarIcon() -> NSImage? {
+        // Use AppIcon scaled to 18pt — stays visible on both light and dark menu bars
+        guard let icon = NSImage(named: "AppIcon") else {
+            return NSImage(systemSymbolName: "sparkles", accessibilityDescription: "Wisp")
+        }
+        let size = NSSize(width: 18, height: 18)
+        let scaled = NSImage(size: size)
+        scaled.lockFocus()
+        icon.draw(in: NSRect(origin: .zero, size: size),
+                  from: NSRect(origin: .zero, size: icon.size),
+                  operation: .sourceOver, fraction: 1.0)
+        scaled.unlockFocus()
+        scaled.isTemplate = false
+        return scaled
     }
 
     private func buildPopover() {
