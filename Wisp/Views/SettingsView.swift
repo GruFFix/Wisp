@@ -13,20 +13,38 @@ struct SettingsView: View {
 
     private let accent = Color(red: 0.55, green: 0.30, blue: 0.98)
 
+    // Colors for the atmospheric glow — follows the active theme
+    private var glowColors: [Color] {
+        if settings.theme == .custom {
+            return [Color(cgColor: settings.customColor1),
+                    Color(cgColor: settings.customColor2),
+                    Color(cgColor: settings.customColor3)]
+        }
+        return settings.theme.swatchColors
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
             // True black base
             Color(red: 0.051, green: 0.051, blue: 0.051).ignoresSafeArea()
 
-            // Atmospheric glow
-            RadialGradient(
-                colors: [accent.opacity(0.22), .clear],
-                center: .init(x: 0.5, y: 0.0),
-                startRadius: 0,
-                endRadius: 220
-            )
-            .frame(height: 220)
+            // Atmospheric glow — one radial blob per theme color, spread across the top
+            ZStack {
+                ForEach(Array(glowColors.enumerated()), id: \.offset) { i, color in
+                    let x = glowColors.count == 1
+                        ? 0.5
+                        : Double(i) / Double(glowColors.count - 1)
+                    RadialGradient(
+                        colors: [color.opacity(0.28), .clear],
+                        center: .init(x: x, y: 0.0),
+                        startRadius: 0,
+                        endRadius: 180
+                    )
+                }
+            }
+            .frame(height: 280)
             .allowsHitTesting(false)
+            .animation(.easeInOut(duration: 0.4), value: settings.theme)
 
             // Content
             VStack(spacing: 0) {
@@ -159,8 +177,18 @@ struct SettingsView: View {
                 )
                 CardDivider()
                 ParamSlider(
+                    title: "Lifespan", icon: "timer",
+                    value: $settings.lifespan, range: 0.3...3.0, accent: accent
+                )
+                CardDivider()
+                ParamSlider(
                     title: "Size", icon: "arrow.up.left.and.arrow.down.right",
                     value: $settings.size, range: 0.5...2.0, accent: accent
+                )
+                CardDivider()
+                ParamSlider(
+                    title: "Opacity", icon: "sun.max",
+                    value: $settings.opacity, range: 0.1...1.0, accent: accent
                 )
                 CardDivider()
                 ParamSlider(
@@ -182,18 +210,32 @@ struct SettingsView: View {
 
     private var systemCard: some View {
         Card {
-            ParamToggle(
-                title: "Launch at Login", icon: "power",
-                isOn: $launchAtLogin,
-                tint: Color(red: 0.18, green: 0.80, blue: 0.44)
-            )
-            .onChange(of: launchAtLogin) { newValue in
-                do {
-                    if newValue { try SMAppService.mainApp.register() }
-                    else        { try SMAppService.mainApp.unregister() }
-                } catch {
-                    launchAtLogin = SMAppService.mainApp.status == .enabled
+            VStack(spacing: 0) {
+                ParamToggle(
+                    title: "Launch at Login", icon: "power",
+                    isOn: $launchAtLogin,
+                    tint: Color(red: 0.18, green: 0.80, blue: 0.44)
+                )
+                .onChange(of: launchAtLogin) { newValue in
+                    do {
+                        if newValue { try SMAppService.mainApp.register() }
+                        else        { try SMAppService.mainApp.unregister() }
+                    } catch {
+                        launchAtLogin = SMAppService.mainApp.status == .enabled
+                    }
                 }
+                CardDivider()
+                ParamToggle(
+                    title: "Exclude from Screenshots", icon: "camera.slash",
+                    isOn: $settings.excludeFromScreenshots,
+                    tint: Color(red: 0.18, green: 0.80, blue: 0.44)
+                )
+                CardDivider()
+                ParamToggle(
+                    title: "Pause on Battery", icon: "bolt.slash",
+                    isOn: $settings.pauseOnBattery,
+                    tint: Color(red: 0.18, green: 0.80, blue: 0.44)
+                )
             }
         }
     }
@@ -317,8 +359,8 @@ struct ParamSlider: View {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 13, weight: .regular))
-                    .foregroundColor(.white.opacity(0.35))
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.white.opacity(0.55))
                     .frame(width: 18)
                 Text(title)
                     .font(.system(size: 12, weight: .medium))
@@ -349,8 +391,8 @@ struct ParamToggle: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 13, weight: .regular))
-                .foregroundColor(.white.opacity(0.35))
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.white.opacity(0.55))
                 .frame(width: 18)
             Text(title)
                 .font(.system(size: 12, weight: .medium))
@@ -376,8 +418,8 @@ struct WindRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "arrow.up.left.and.arrow.down.right.circle")
-                .font(.system(size: 13, weight: .regular))
-                .foregroundColor(.white.opacity(0.35))
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.white.opacity(0.55))
                 .frame(width: 18)
             Text("Direction")
                 .font(.system(size: 12, weight: .medium))
@@ -490,11 +532,14 @@ struct WindJoystick: View {
                     }
             )
             // Double-tap to reset to centre
-            .onTapGesture(count: 2) {
-                withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
-                    windX = 0; windY = 0
+            // Uses simultaneousGesture so DragGesture(minimumDistance:0) doesn't block it
+            .simultaneousGesture(
+                TapGesture(count: 2).onEnded {
+                    withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
+                        windX = 0; windY = 0
+                    }
                 }
-            }
+            )
         }
     }
 }

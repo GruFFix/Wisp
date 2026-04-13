@@ -11,17 +11,22 @@ struct DustConfig {
     var density:     Float      = 1.0
     var speed:       Float      = 1.0
     var size:        Float      = 1.0
+    var opacity:     Float      = 1.0
+    var lifespan:    Float      = 1.0
     var drift:       Float      = 1.0
     var glow:        Bool       = true
     /// Joystick position, each –1…1. (0,0) = calm, (1,0) = full right, (0,1) = full up.
     var windX:       Float      = 0
     var windY:       Float      = 0
+    var excludeFromScreenshots: Bool = false
 }
 
 // MARK: - Base values (all multipliers = 1.0)
 
 private struct CellBase {
     let birthPerFraction: Float
+    let lifetime:         CGFloat
+    let lifetimeRange:    CGFloat
     let velocity:         CGFloat
     let velocityRange:    CGFloat
     let scale:            CGFloat
@@ -32,11 +37,11 @@ private struct CellBase {
 
 // Lifetimes are short (8–16 s) so wind direction changes are visible quickly.
 // xAccelPerDrift is large enough that drift=1 noticeably biases particle paths.
-private let auraBase  = CellBase(birthPerFraction:  2, velocity:  4, velocityRange:  6, scale: 0.200, scaleRange: 0.070, yAcceleration:  0, xAccelPerDrift: 0.8)
-private let nearBase  = CellBase(birthPerFraction:  5, velocity: 12, velocityRange: 22, scale: 0.110, scaleRange: 0.045, yAcceleration: -1, xAccelPerDrift: 3.5)
-private let moteBase  = CellBase(birthPerFraction: 14, velocity:  8, velocityRange: 18, scale: 0.052, scaleRange: 0.022, yAcceleration: -1, xAccelPerDrift: 3.0)
-private let sparkBase = CellBase(birthPerFraction: 22, velocity:  5, velocityRange: 12, scale: 0.036, scaleRange: 0.015, yAcceleration: -2, xAccelPerDrift: 2.5)
-private let dotBase   = CellBase(birthPerFraction: 35, velocity:  3, velocityRange:  9, scale: 0.130, scaleRange: 0.050, yAcceleration: -2, xAccelPerDrift: 2.0)
+private let auraBase  = CellBase(birthPerFraction:  2, lifetime: 14, lifetimeRange: 4, velocity:  4, velocityRange:  6, scale: 0.200, scaleRange: 0.070, yAcceleration:  0, xAccelPerDrift: 0.8)
+private let nearBase  = CellBase(birthPerFraction:  5, lifetime:  8, lifetimeRange: 3, velocity: 12, velocityRange: 22, scale: 0.110, scaleRange: 0.045, yAcceleration: -1, xAccelPerDrift: 3.5)
+private let moteBase  = CellBase(birthPerFraction: 14, lifetime: 10, lifetimeRange: 3, velocity:  8, velocityRange: 18, scale: 0.052, scaleRange: 0.022, yAcceleration: -1, xAccelPerDrift: 3.0)
+private let sparkBase = CellBase(birthPerFraction: 22, lifetime: 12, lifetimeRange: 4, velocity:  5, velocityRange: 12, scale: 0.036, scaleRange: 0.015, yAcceleration: -2, xAccelPerDrift: 2.5)
+private let dotBase   = CellBase(birthPerFraction: 35, lifetime: 16, lifetimeRange: 5, velocity:  3, velocityRange:  9, scale: 0.130, scaleRange: 0.050, yAcceleration: -2, xAccelPerDrift: 2.0)
 
 // MARK: - DustEmitter
 
@@ -64,6 +69,8 @@ final class DustEmitter {
     func resume() { layer.birthRate = 1 }
 
     func apply(_ cfg: DustConfig) {
+        layer.opacity = cfg.opacity
+
         let needsRebuild = paletteCount == 0
                         || cfg.theme != lastTheme
                         || cfg.glow  != lastGlow
@@ -110,12 +117,15 @@ final class DustEmitter {
     private func setCell(_ name: String, base: CellBase, fraction: Float, cfg: DustConfig) {
         let p  = "emitterCells.\(name)"
         let s  = CGFloat(cfg.speed); let z = CGFloat(cfg.size); let dr = CGFloat(cfg.drift)
+        let ls = CGFloat(cfg.lifespan)
         let wm = base.xAccelPerDrift * dr
         layer.setValue(base.birthPerFraction * cfg.density * fraction, forKeyPath: p + ".birthRate")
         layer.setValue(base.velocity      * s,                         forKeyPath: p + ".velocity")
         layer.setValue(base.velocityRange * s,                         forKeyPath: p + ".velocityRange")
         layer.setValue(base.scale         * z,                         forKeyPath: p + ".scale")
         layer.setValue(base.scaleRange    * z,                         forKeyPath: p + ".scaleRange")
+        layer.setValue(base.lifetime      * ls,                        forKeyPath: p + ".lifetime")
+        layer.setValue(base.lifetimeRange * ls,                        forKeyPath: p + ".lifetimeRange")
         layer.setValue(base.yAcceleration * s + wm * CGFloat(cfg.windY), forKeyPath: p + ".yAcceleration")
         layer.setValue(wm * CGFloat(cfg.windX),                          forKeyPath: p + ".xAcceleration")
     }
@@ -134,6 +144,7 @@ final class DustEmitter {
                            main: CGColor, bright: CGColor, glow: CGColor) -> [CAEmitterCell] {
         let d    = cfg.density * fraction
         let s    = CGFloat(cfg.speed); let z = CGFloat(cfg.size); let dr = CGFloat(cfg.drift)
+        let ls   = CGFloat(cfg.lifespan)
         let wx_n = CGFloat(cfg.windX)
         let wy_n = CGFloat(cfg.windY)
 
@@ -142,7 +153,7 @@ final class DustEmitter {
 
         let aura = makeCell(
             name: "aura_\(i)", tex: ParticleImage.blob,
-            birth: auraBase.birthPerFraction * d, life: 14, lifeRange: 4,
+            birth: auraBase.birthPerFraction * d, life: auraBase.lifetime * ls, lifeRange: auraBase.lifetimeRange * ls,
             vel: auraBase.velocity * s, velRange: auraBase.velocityRange * s,
             scale: auraBase.scale * z, scaleRange: auraBase.scaleRange * z, scaleSpeed: 0.008,
             alphaSpeed: -0.030, alphaRange: 0.08, color: glow,
@@ -150,7 +161,7 @@ final class DustEmitter {
 
         let near = makeCell(
             name: "near_\(i)", tex: ParticleImage.glow,
-            birth: nearBase.birthPerFraction * d, life: 8, lifeRange: 3,
+            birth: nearBase.birthPerFraction * d, life: nearBase.lifetime * ls, lifeRange: nearBase.lifetimeRange * ls,
             vel: nearBase.velocity * s, velRange: nearBase.velocityRange * s,
             scale: nearBase.scale * z, scaleRange: nearBase.scaleRange * z,
             alphaSpeed: -0.085, alphaRange: 0.30,
@@ -159,7 +170,7 @@ final class DustEmitter {
 
         let mote = makeCell(
             name: "mote_\(i)", tex: ParticleImage.glow,
-            birth: moteBase.birthPerFraction * d, life: 10, lifeRange: 3,
+            birth: moteBase.birthPerFraction * d, life: moteBase.lifetime * ls, lifeRange: moteBase.lifetimeRange * ls,
             vel: moteBase.velocity * s, velRange: moteBase.velocityRange * s,
             scale: moteBase.scale * z, scaleRange: moteBase.scaleRange * z,
             alphaSpeed: -0.058, alphaRange: 0.35,
@@ -168,7 +179,7 @@ final class DustEmitter {
 
         let spark = makeCell(
             name: "spark_\(i)", tex: ParticleImage.core,
-            birth: sparkBase.birthPerFraction * d, life: 12, lifeRange: 4,
+            birth: sparkBase.birthPerFraction * d, life: sparkBase.lifetime * ls, lifeRange: sparkBase.lifetimeRange * ls,
             vel: sparkBase.velocity * s, velRange: sparkBase.velocityRange * s,
             scale: sparkBase.scale * z, scaleRange: sparkBase.scaleRange * z,
             alphaSpeed: -0.042, alphaRange: 0.40,
@@ -177,7 +188,7 @@ final class DustEmitter {
 
         let dot = makeCell(
             name: "dot_\(i)", tex: ParticleImage.dot,
-            birth: dotBase.birthPerFraction * d, life: 16, lifeRange: 5,
+            birth: dotBase.birthPerFraction * d, life: dotBase.lifetime * ls, lifeRange: dotBase.lifetimeRange * ls,
             vel: dotBase.velocity * s, velRange: dotBase.velocityRange * s,
             scale: dotBase.scale * z, scaleRange: dotBase.scaleRange * z,
             alphaSpeed: -0.028, alphaRange: 0.45,

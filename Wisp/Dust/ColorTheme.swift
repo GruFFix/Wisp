@@ -25,7 +25,7 @@ enum ColorTheme: String, CaseIterable, Identifiable {
     }
 
     // Returns (main, bright, glow) colours for this theme.
-    // Custom theme returns one group per provided colour (up to 3).
+    // Custom and Wallpaper themes return one group per provided colour (up to 3).
     func palette(customColors: [CGColor]) -> [(main: CGColor, bright: CGColor, glow: CGColor)] {
         switch self {
         case .golden:

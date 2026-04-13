@@ -32,7 +32,10 @@ final class DustWindow: NSWindow {
         dustEmitter = DustEmitter(hostLayer: root, screenSize: frame.size)
     }
 
-    func apply(_ cfg: DustConfig) { dustEmitter.apply(cfg) }
+    func apply(_ cfg: DustConfig) {
+        sharingType = cfg.excludeFromScreenshots ? .none : .readOnly
+        dustEmitter.apply(cfg)
+    }
     func pause()                  { dustEmitter.pause() }
     func resume()                 { dustEmitter.resume() }
 }

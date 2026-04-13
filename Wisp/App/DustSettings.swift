@@ -27,6 +27,12 @@ final class DustSettings: ObservableObject {
     @Published var size: Float {
         didSet { UserDefaults.standard.set(size, forKey: "size") }
     }
+    @Published var opacity: Float {
+        didSet { UserDefaults.standard.set(opacity, forKey: "opacity") }
+    }
+    @Published var lifespan: Float {
+        didSet { UserDefaults.standard.set(lifespan, forKey: "lifespan") }
+    }
     @Published var drift: Float {
         didSet { UserDefaults.standard.set(drift, forKey: "drift") }
     }
@@ -38,6 +44,12 @@ final class DustSettings: ObservableObject {
     }
     @Published var windY: Float {
         didSet { UserDefaults.standard.set(windY, forKey: "windY") }
+    }
+    @Published var excludeFromScreenshots: Bool {
+        didSet { UserDefaults.standard.set(excludeFromScreenshots, forKey: "excludeFromScreenshots") }
+    }
+    @Published var pauseOnBattery: Bool {
+        didSet { UserDefaults.standard.set(pauseOnBattery, forKey: "pauseOnBattery") }
     }
 
     // MARK: - Init (loads from UserDefaults)
@@ -51,21 +63,32 @@ final class DustSettings: ObservableObject {
         customColor2 = ud.data(forKey: "customColor2").flatMap(CGColor.decode) ?? CGColor(red: 0.6, green: 0.8, blue: 1, alpha: 1)
         customColor3 = ud.data(forKey: "customColor3").flatMap(CGColor.decode) ?? CGColor(red: 0.8, green: 0.6, blue: 1, alpha: 1)
 
-        density = ud.object(forKey: "density") != nil ? ud.float(forKey: "density") : 1.0
-        speed   = ud.object(forKey: "speed")   != nil ? ud.float(forKey: "speed")   : 1.0
-        size    = ud.object(forKey: "size")    != nil ? ud.float(forKey: "size")    : 1.0
-        drift   = ud.object(forKey: "drift")   != nil ? ud.float(forKey: "drift")   : 1.0
-        glow    = ud.object(forKey: "glow")    != nil ? ud.bool(forKey:  "glow")    : true
-        windX   = ud.object(forKey: "windX")   != nil ? ud.float(forKey: "windX")   : 0
-        windY   = ud.object(forKey: "windY")   != nil ? ud.float(forKey: "windY")   : 0
+        density  = ud.object(forKey: "density")  != nil ? ud.float(forKey: "density")  : 1.0
+        speed    = ud.object(forKey: "speed")    != nil ? ud.float(forKey: "speed")    : 1.0
+        size     = ud.object(forKey: "size")     != nil ? ud.float(forKey: "size")     : 1.0
+        opacity  = ud.object(forKey: "opacity")  != nil ? ud.float(forKey: "opacity")  : 1.0
+        lifespan = ud.object(forKey: "lifespan") != nil ? ud.float(forKey: "lifespan") : 1.0
+        drift    = ud.object(forKey: "drift")    != nil ? ud.float(forKey: "drift")    : 1.0
+        glow     = ud.object(forKey: "glow")     != nil ? ud.bool(forKey:  "glow")     : true
+        windX    = ud.object(forKey: "windX")    != nil ? ud.float(forKey: "windX")    : 0
+        windY    = ud.object(forKey: "windY")    != nil ? ud.float(forKey: "windY")    : 0
+
+        excludeFromScreenshots = ud.object(forKey: "excludeFromScreenshots") != nil
+            ? ud.bool(forKey: "excludeFromScreenshots") : false
+        pauseOnBattery = ud.object(forKey: "pauseOnBattery") != nil
+            ? ud.bool(forKey: "pauseOnBattery") : false
     }
 
     // MARK: - Config
 
     var config: DustConfig {
-        DustConfig(theme: theme, customColors: [customColor1, customColor2, customColor3],
-                   density: density, speed: speed, size: size,
-                   drift: drift, glow: glow, windX: windX, windY: windY)
+        return DustConfig(
+            theme: theme, customColors: [customColor1, customColor2, customColor3],
+            density: density, speed: speed, size: size,
+            opacity: opacity, lifespan: lifespan,
+            drift: drift, glow: glow, windX: windX, windY: windY,
+            excludeFromScreenshots: excludeFromScreenshots
+        )
     }
 }
 
