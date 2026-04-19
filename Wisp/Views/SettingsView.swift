@@ -243,11 +243,13 @@ struct SettingsView: View {
     // MARK: - Footer
 
     private var footer: some View {
-        HStack {
-            Text("v1.0")
+        HStack(spacing: 8) {
+            Text("v\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0")")
                 .font(.system(size: 10, design: .monospaced))
                 .foregroundColor(.white.opacity(0.18))
+
             Spacer()
+
             Menu {
                 Button("Check for Updates…") { onCheckForUpdates() }
                 Divider()

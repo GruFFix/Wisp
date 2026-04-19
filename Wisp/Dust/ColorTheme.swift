@@ -44,9 +44,7 @@ enum ColorTheme: String, CaseIterable, Identifiable {
             return [(.rgb(0.30, 0.55, 1.00), .rgb(0.75, 0.88, 1.00), .rgb(0.15, 0.35, 0.95, 0.12))]
         case .custom:
             return customColors.map { c in
-                let r = c.components?[0] ?? 1
-                let g = c.components?[1] ?? 1
-                let b = c.components?[2] ?? 1
+                let (r, g, b) = c.rgbComponents
                 return (.rgb(r, g, b),
                         .rgb(min(r+0.3,1), min(g+0.3,1), min(b+0.3,1)),
                         .rgb(r*0.8, g*0.8, b*0.8, 0.12))
@@ -58,5 +56,16 @@ enum ColorTheme: String, CaseIterable, Identifiable {
 private extension CGColor {
     static func rgb(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 1) -> CGColor {
         CGColor(red: r, green: g, blue: b, alpha: a)
+    }
+
+    /// Safe RGB extraction — converts to sRGB first so any color space (grayscale, CMYK, P3…) works.
+    var rgbComponents: (r: CGFloat, g: CGFloat, b: CGFloat) {
+        let srgb = CGColorSpace(name: CGColorSpace.sRGB)!
+        if let converted = self.converted(to: srgb, intent: .defaultIntent, options: nil),
+           let comps = converted.components, comps.count >= 3 {
+            return (comps[0], comps[1], comps[2])
+        }
+        // Fallback: treat as opaque white rather than crash
+        return (1, 1, 1)
     }
 }

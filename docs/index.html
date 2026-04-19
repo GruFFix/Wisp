@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary SEO -->
+  <title>Wisp — Beautiful Desktop Particle Effects for macOS</title>
+  <meta name="description" content="Wisp adds stunning ambient particle effects to your macOS desktop. 6 color themes, fully customizable density, speed, size and wind direction. Free download for macOS 14+.">
+  <meta name="keywords" content="macOS desktop app, particle effects, desktop widget, ambient animation, macOS Sonoma, menu bar app, live wallpaper macOS, desktop particles, free mac app, customizable particles">
+  <meta name="author" content="GruFFix">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://gruffix.github.io/wisp/">
+  <link rel="alternate" hreflang="en"       href="https://gruffix.github.io/wisp/">
+  <link rel="alternate" hreflang="ru"       href="https://gruffix.github.io/wisp/?lang=ru">
+  <link rel="alternate" hreflang="x-default" href="https://gruffix.github.io/wisp/">
+
+  <!-- Open Graph (Facebook, LinkedIn, iMessage) -->
+  <meta property="og:type"        content="website">
+  <meta property="og:site_name"   content="Wisp">
+  <meta property="og:url"         content="https://gruffix.github.io/wisp/">
+  <meta property="og:title"       content="Wisp — Beautiful Desktop Particle Effects for macOS">
+  <meta property="og:description" content="Stunning ambient particles that float across your macOS desktop. Free, lightweight, fully customizable. Download now.">
+  <meta property="og:image"       content="https://gruffix.github.io/wisp/assets/icon.png">
+  <meta property="og:image:width"  content="256">
+  <meta property="og:image:height" content="256">
+  <meta property="og:image:alt"    content="Wisp app icon">
+  <meta property="og:locale"            content="en_US">
+  <meta property="og:locale:alternate"  content="ru_RU">
+  <meta property="og:image:type"        content="image/png">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="Wisp — Desktop Particle Effects for macOS">
+  <meta name="twitter:description" content="Beautiful ambient particles on your macOS desktop. Free, lightweight, 6 color themes. Download now.">
+  <meta name="twitter:image"       content="https://gruffix.github.io/wisp/assets/icon.png">
+
+  <!-- App meta -->
+  <meta name="application-name" content="Wisp">
+  <meta name="theme-color"      content="#080808">
+  <meta name="apple-mobile-web-app-title"   content="Wisp">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <!-- Favicons -->
+  <link rel="icon"             href="assets/icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+
+  <!-- Structured Data: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Wisp",
+    "description": "Beautiful ambient particle effects that float across your macOS desktop. Fully customizable color themes, density, speed, size, opacity, wind direction and more.",
+    "url": "https://gruffix.github.io/wisp/",
+    "downloadUrl": "https://github.com/GruFFix/wisp-releases/releases/latest",
+    "applicationCategory": "UtilitiesApplication",
+    "applicationSubCategory": "Desktop Customization",
+    "operatingSystem": "macOS 14 Sonoma or later",
+    "softwareVersion": "1.0",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "image": "https://gruffix.github.io/wisp/assets/icon.png",
+    "author": {
+      "@type": "Person",
+      "name": "GruFFix"
+    },
+    "featureList": [
+      "6 color themes including custom color picker",
+      "Adjustable density, speed, size, opacity and lifespan",
+      "Wind direction joystick control",
+      "Additive glow blend mode",
+      "Exclude from screenshots",
+      "Pause on battery",
+      "Launch at login",
+      "Auto-update via Sparkle"
+    ],
+    "releaseNotes": "Initial release with full particle customization and Sparkle auto-update support."
+  }
+  </script>
+
+  <!-- Performance -->
+  <link rel="preload" href="assets/style.css" as="style">
+  <link rel="preload" href="assets/icon.png"  as="image">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">
+    <img src="assets/icon.png" width="28" height="28" style="border-radius:7px" alt="Wisp">
+    Wisp
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button id="lang-btn" onclick="toggleLang()" aria-label="Switch language" style="visibility:hidden">RU</button>
+    <a href="https://github.com/GruFFix/wisp-releases/releases/latest" class="nav-download" data-i18n="nav.download">Download</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge" data-i18n="hero.badge">✦ Free for macOS</div>
+  <h1 data-i18n-html="hero.h1">Your desktop,<br>alive.</h1>
+  <p data-i18n="hero.p">Wisp adds beautiful ambient particle effects that float across your screen — subtle, mesmerizing, and fully customizable.</p>
+  <div class="hero-actions">
+    <a href="https://github.com/GruFFix/wisp-releases/releases/latest" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 1v9M4 7l4 4 4-4M2 13h12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span data-i18n="btn.download">Download for Mac</span>
+    </a>
+    <a href="#features" class="btn-secondary" data-i18n="btn.features">See features →</a>
+  </div>
+  <p class="hero-note" data-i18n="hero.note">Free · macOS 14+ · Apple Silicon &amp; Intel</p>
+</section>
+
+<!-- App preview -->
+<div class="preview-wrap">
+  <div class="preview-glow"></div>
+  <div class="app-window">
+
+    <div class="app-titlebar">
+      <div>
+        <div class="app-title">Wisp</div>
+        <div class="app-subtitle" data-i18n="app.subtitle">DESKTOP PARTICLES</div>
+      </div>
+      <div class="app-close">✕</div>
+    </div>
+
+    <div class="app-section">
+      <div class="app-label" data-i18n="app.theme">Color Theme</div>
+      <div class="app-swatches">
+        <div class="swatch swatch-gold"   data-theme="0"></div>
+        <div class="swatch swatch-rose"   data-theme="1"></div>
+        <div class="swatch swatch-moon"   data-theme="2"></div>
+        <div class="swatch swatch-aurora active" data-theme="3"></div>
+        <div class="swatch swatch-sapph"  data-theme="4"></div>
+        <div class="swatch swatch-custom" data-theme="5">⊕</div>
+      </div>
+    </div>
+
+    <div class="app-section">
+      <div class="app-row">
+        <span class="app-row-icon">⊞</span>
+        <span class="app-row-label" data-i18n="app.density">Density</span>
+        <div class="app-slider"><div class="app-slider-fill" style="width:60%"></div></div>
+        <span class="app-row-value">1.5</span>
+      </div>
+      <div class="app-row">
+        <span class="app-row-icon">→</span>
+        <span class="app-row-label" data-i18n="app.speed">Speed</span>
+        <div class="app-slider"><div class="app-slider-fill" style="width:40%"></div></div>
+        <span class="app-row-value">1.0</span>
+      </div>
+      <div class="app-row">
+        <span class="app-row-icon">◎</span>
+        <span class="app-row-label" data-i18n="app.size">Size</span>
+        <div class="app-slider"><div class="app-slider-fill" style="width:50%"></div></div>
+        <span class="app-row-value">1.2</span>
+      </div>
+      <div class="app-row">
+        <span class="app-row-icon">☀</span>
+        <span class="app-row-label" data-i18n="app.opacity">Opacity</span>
+        <div class="app-slider"><div class="app-slider-fill" style="width:80%"></div></div>
+        <span class="app-row-value">0.8</span>
+      </div>
+    </div>
+
+    <div class="app-footer">
+      <span class="app-version">v1.0</span>
+      <span class="app-menu">•••</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="container">
+    <h2 data-i18n-html="features.h2">Everything you need,<br>nothing you don't.</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🎨</span>
+        <h3 data-i18n="f1.title">6 Color Themes</h3>
+        <p  data-i18n="f1.desc">Golden, Rose, Moonlight, Aurora, Sapphire — or mix your own three colors with the custom picker.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⚙️</span>
+        <h3 data-i18n="f2.title">Full Control</h3>
+        <p  data-i18n="f2.desc">Tune density, speed, size, opacity, lifespan, drift, and wind direction. Every detail is yours to adjust.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔋</span>
+        <h3 data-i18n="f3.title">Battery Aware</h3>
+        <p  data-i18n="f3.desc">Automatically pauses when running on battery power. Your laptop's charge comes first.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📸</span>
+        <h3 data-i18n="f4.title">Screenshot Clean</h3>
+        <p  data-i18n="f4.desc">Optionally exclude particles from screenshots and screen recordings. Your content, distraction‑free.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">✨</span>
+        <h3 data-i18n="f5.title">Additive Glow</h3>
+        <p  data-i18n="f5.desc">Toggle additive blend mode for an ethereal, light-layering glow effect that looks stunning on dark wallpapers.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔄</span>
+        <h3 data-i18n="f6.title">Auto Updates</h3>
+        <p  data-i18n="f6.desc">Built-in Sparkle updater keeps Wisp current automatically — no App Store, no fuss.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Requirements -->
+<section class="requirements">
+  <div class="container">
+    <div class="req-pill" data-i18n="req.1">🍎 macOS 14 Sonoma or later</div>
+    <div class="req-pill" data-i18n="req.2">⚡ Apple Silicon &amp; Intel</div>
+    <div class="req-pill" data-i18n="req.3">🪶 ~4 MB download</div>
+    <div class="req-pill" data-i18n="req.4">🔒 No tracking, no data collection</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="cta-glow"></div>
+  <div class="container" style="position:relative">
+    <h2 data-i18n-html="cta.h2">Make your desktop<br>feel alive.</h2>
+    <p data-i18n="cta.p">Free download. No account required.</p>
+    <a href="https://github.com/GruFFix/wisp-releases/releases/latest" class="btn-primary" style="font-size:17px; padding:16px 36px;" data-i18n="cta.btn">Download Wisp — Free</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <span>© 2025 Wisp</span>
+  <div>
+    <a href="https://github.com/GruFFix/wisp-releases/releases" style="margin-right:20px" data-i18n="footer.releases">Releases</a>
+    <a href="https://github.com/GruFFix/Wisp" data-i18n="footer.github">GitHub</a>
+  </div>
+</footer>
+
+<script src="assets/script.js" defer></script>
+</body>
+</html>
