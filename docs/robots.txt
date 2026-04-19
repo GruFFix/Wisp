@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gruffix.github.io/Wisp/sitemap.xml
+Sitemap: https://wisp.gruffix.ru/sitemap.xml

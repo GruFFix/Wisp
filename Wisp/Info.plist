@@ -25,7 +25,7 @@
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://gruffix.github.io/Wisp/appcast.xml</string>
+	<string>https://wisp.gruffix.ru/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>HfeiC9J2JUQFerjkq/c/U5lQsFFaBoTzFGpe7bxtoy4=</string>
 </dict>
