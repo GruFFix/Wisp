@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="yes"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>Wisp</title>
+        <link>https://github.com/GruFFix/Wisp</link>
+        <language>en</language>
+        <item>
+            <title>Wisp 1.0</title>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
+            <pubDate>Thu, 10 Apr 2026 00:00:00 +0000</pubDate>
+            <enclosure
+                url="https://github.com/GruFFix/Wisp/releases/download/v1.0/Wisp-1.0.dmg"
+                sparkle:version="1"
+                sparkle:shortVersionString="1.0"
+                length="0"
+                type="application/octet-stream"
+                sparkle:edDSASignature="TO_BE_FILLED" />
+        </item>
+    </channel>
+</rss>
