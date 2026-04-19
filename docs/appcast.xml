@@ -8,14 +8,14 @@
             <title>Wisp 1.0</title>
             <sparkle:version>1</sparkle:version>
             <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
-            <pubDate>Thu, 10 Apr 2026 00:00:00 +0000</pubDate>
+            <pubDate>Sun, 19 Apr 2026 16:50:00 +0000</pubDate>
             <enclosure
                 url="https://github.com/GruFFix/Wisp/releases/download/v1.0/Wisp-1.0.dmg"
                 sparkle:version="1"
                 sparkle:shortVersionString="1.0"
-                length="0"
+                length="3990748"
                 type="application/octet-stream"
-                sparkle:edDSASignature="TO_BE_FILLED" />
+                sparkle:edSignature="9zaYnrn/5ELap53c2FutCv2pyg8kDvW+Nc9nw9QTPRkwInzgGE2c53GYxsaBYUJlcfQBJnEkQeVmE17dkR8rDQ==" />
         </item>
     </channel>
 </rss>
