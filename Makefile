@@ -9,16 +9,16 @@ generate:
 	xcodegen generate
 
 build: generate
-	xcodebuild -project FairyDesk.xcodeproj -scheme FairyDesk -configuration Debug build SYMROOT=$(PWD)/build
+	xcodebuild -project Wisp.xcodeproj -scheme Wisp -configuration Debug build SYMROOT=$(PWD)/build
 
 run: build
-	open ./build/Debug/FairyDesk.app
+	open ./build/Debug/Wisp.app
 
 # ── Release build + DMG ────────────────────────────────────────────────────────
 dmg:
 	@echo "▶︎  Building Release..."
-	xcodebuild -project FairyDesk.xcodeproj \
-	           -scheme FairyDesk \
+	xcodebuild -project Wisp.xcodeproj \
+	           -scheme Wisp \
 	           -configuration Release \
 	           SYMROOT=$(PWD)/build \
 	           build
@@ -42,4 +42,4 @@ dmg:
 	@echo "✅  $(DMG_NAME) ready"
 
 clean:
-	rm -rf build/ FairyDesk.xcodeproj $(DMG_NAME)
+	rm -rf build/ Wisp.xcodeproj $(DMG_NAME)
